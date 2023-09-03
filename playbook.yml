@@ -1,0 +1,23 @@
+---
+- hosts: webservers
+  become: yes
+  become_user: ansiuser
+  vars: 
+    username: ansiuser
+    doc_root: /var/www/html
+  tasks:
+  - name: Install nginx
+    apt:
+      name: nginx
+      state: present
+    when: ansible_os_family == "Debian"
+  - name: Start nginx
+    service:
+      name: nginx
+      state: started 
+      enabled: yes
+    when: ansible_os_family == "Debian"
+  - name: Copy index template from templates
+    ansible.builtin.copy: 
+      src: '/var/lib/jenkins/workspace/project1/target/addressbook.war'
+      dest: "{{ doc_root }}"
